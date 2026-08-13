@@ -3,13 +3,15 @@ import type { FreezeRound } from '../core/types'
 import type { GameProps } from './shared'
 
 /**
- * Move, stop, and get going again. The teacher drives every switch from
- * their own screen, so this works perfectly with no audio at all (spec §11).
+ * Move, stop, and get going again. A grown-up drives every switch — the teacher
+ * from their own screen in a live lesson, the parent from the control strip in
+ * together mode — so this works perfectly with no audio at all (spec §11), and
+ * a family can put their own music on.
  *
- * The teacher's marks are never shown here — the child sees a game, not
+ * The grown-up's marks are never shown here — the child sees a game, not
  * an assessment.
  */
-export function FreezeDance({ round, cue }: GameProps<FreezeRound>) {
+export function FreezeDance({ round, cue, driver }: GameProps<FreezeRound>) {
   // Opposite mode flips the meaning of the words, which is the whole point.
   const flipped = round.mode === 'opposite'
   const commanded = cue?.state ?? 'dance'
@@ -47,7 +49,11 @@ export function FreezeDance({ round, cue }: GameProps<FreezeRound>) {
       )}
 
       {!cue && (
-        <p className="feedback">Wait for Florie to start the music…</p>
+        <p className="feedback">
+          {driver
+            ? `Wait for ${driver} to start the music…`
+            : 'Put your music on — then dance!'}
+        </p>
       )}
     </div>
   )

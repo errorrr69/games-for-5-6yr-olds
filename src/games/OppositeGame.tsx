@@ -8,23 +8,40 @@ import type { GameProps } from './shared'
  * Inhibitory control: hear the instruction, hold the rule in mind, and do
  * the other thing.
  *
- * Physical commands are marked by the teacher over the video call — there
- * is deliberately no body tracking anywhere in this app (spec §7).
+ * Physical commands are marked by the grown-up watching — there is deliberately
+ * no body tracking anywhere in this app (spec §7).
  */
 export function OppositeGame({
   round,
   cue,
+  driver,
   onAnswer,
   onInteraction,
 }: GameProps<OppositeRound>) {
   const [answered, setAnswered] = useState<string | null>(null)
   const [wobbled, setWobbled] = useState(false)
 
-  // Each new instruction is a clean slate.
+  /**
+   * The instruction currently on the table.
+   *
+   * In a live lesson the teacher pushes a cue. In together mode nobody is
+   * pushing anything, so the ROUND supplies it: pairs are shuffled per round,
+   * so the first one is the instruction and the rest stand as distractors.
+   * Same game, one fewer person required.
+   */
+  const lead = round.pairs[0]
+  const active = cue
+    ? { id: cue.id, headline: cue.headline, detail: cue.detail, expect: cue.expect }
+    : lead
+      ? { id: round.id, headline: lead.command.label, detail: undefined, expect: lead.opposite.id }
+      : null
+
+  // Each new instruction is a clean slate. Keyed on the round too, because in
+  // together mode a new round IS the new instruction.
   useEffect(() => {
     setAnswered(null)
     setWobbled(false)
-  }, [cue?.id])
+  }, [cue?.id, round.id])
 
   const screenMode = round.mode === 'screen'
   const options: Choice[] = round.pairs.flatMap((pair) => [
@@ -34,7 +51,7 @@ export function OppositeGame({
 
   const choose = (option: Choice) => {
     if (answered) return
-    const correct = option.id === cue?.expect
+    const correct = option.id === active?.expect
     setAnswered(option.id)
     if (correct) {
       play('chime')
@@ -49,7 +66,7 @@ export function OppositeGame({
     })
     onAnswer(correct ? 1 : 0, {
       correct,
-      label: `${cue?.headline ?? '?'} → ${option.label}${correct ? ' ✓' : ''}`,
+      label: `${active?.headline ?? '?'} → ${option.label}${correct ? ' ✓' : ''}`,
     })
   }
 
@@ -69,7 +86,7 @@ export function OppositeGame({
         {round.pairs.map((pair) => (
           <li key={pair.id} className="rule-card">
             <span className="rule-said">
-              <small>If Florie says</small>
+              <small>{driver ? `If ${driver} says` : 'If you hear'}</small>
               <strong>{pair.command.label}</strong>
             </span>
             <span className="rule-arrow" aria-hidden="true">
@@ -83,11 +100,11 @@ export function OppositeGame({
         ))}
       </ul>
 
-      {cue ? (
+      {active ? (
         <div className={`command-card ${wobbled ? 'is-wobble' : ''}`}>
-          <p className="command-said">Florie says</p>
-          <p className="command-word">{cue.headline}</p>
-          {cue.detail && <p className="command-detail">{cue.detail}</p>}
+          <p className="command-said">{driver ? `${driver} says` : 'Do the opposite of'}</p>
+          <p className="command-word">{active.headline}</p>
+          {active.detail && <p className="command-detail">{active.detail}</p>}
         </div>
       ) : (
         <div className="command-card is-waiting">
@@ -96,9 +113,9 @@ export function OppositeGame({
         </div>
       )}
 
-      <BrainBrakes engaged={!!cue && !wobbled} />
+      <BrainBrakes engaged={!!active && !wobbled} />
 
-      {screenMode && cue && (
+      {screenMode && active && (
         <>
           <ul className="opposite-choices">
             {options.map((option) => (
@@ -134,7 +151,9 @@ export function OppositeGame({
 
       {!screenMode && (
         <p className="feedback">
-          {cue ? 'Show Florie with your body!' : 'Watch and listen…'}
+          {active
+            ? `Show ${driver ?? 'your grown-up'} with your body!`
+            : 'Watch and listen…'}
         </p>
       )}
     </div>

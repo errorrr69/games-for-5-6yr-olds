@@ -15,6 +15,7 @@ import type { GameProps } from './shared'
 export function MirrorFaces({
   round,
   cue,
+  driver,
   onObserve,
 }: GameProps<MirrorRound>) {
   const [guess, setGuess] = useState<Choice | null>(null)
@@ -45,10 +46,14 @@ export function MirrorFaces({
           <p className="face-word-sub">face!</p>
         </div>
         <p className="feedback">
-          Florie can see you on the video call. Hold it for a moment!
+          {driver
+            ? `${driver} can see you on the video call. Hold it for a moment!`
+            : 'Show your grown-up! Hold it for a moment!'}
         </p>
         <p className="mirror-hint">
-          No camera is used by this game — only your video call.
+          {driver
+            ? 'No camera is used by this game — only your video call.'
+            : 'No camera is used by this game.'}
         </p>
       </div>
     )
@@ -84,7 +89,9 @@ export function MirrorFaces({
     onObserve({
       field: 'protest',
       choices: [{ id: 'disagree', label: `disagreed with "${sillyGuess}"` }],
-      label: `Corrected Florie’s silly guess (${sillyGuess})`,
+      label: driver
+        ? `Corrected ${driver}’s silly guess (${sillyGuess})`
+        : `Corrected the silly guess (${sillyGuess})`,
     })
   }
 
@@ -102,7 +109,8 @@ export function MirrorFaces({
       {sillyGuess && (
         <div className="silly-guess">
           <p>
-            Florie thinks they look <strong>{sillyGuess}</strong>…
+            {driver ?? 'Your grown-up'} thinks they look{' '}
+            <strong>{sillyGuess}</strong>…
           </p>
           {!protested ? (
             <button type="button" className="button-primary noo-button" onClick={protest}>
@@ -110,7 +118,7 @@ export function MirrorFaces({
             </button>
           ) : (
             <p className="feedback feedback-success">
-              You told Florie! What do YOU think?
+              You told {driver ?? 'them'}! What do YOU think?
             </p>
           )}
         </div>

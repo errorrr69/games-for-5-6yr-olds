@@ -29,13 +29,23 @@ type Recorded = {
   interactions: Omit<Interaction, 'game' | 'roundId'>[]
 }
 
-function mount(round: Round, cue?: Cue) {
+/**
+ * Mounts a game in one of the two ways it really runs.
+ *
+ *   'lesson'   — a live call with a named teacher driving (the default).
+ *   'together' — mother and child in one room; the copy names nobody.
+ *
+ * A mode rather than a driver name on purpose: `driver: undefined` would hit the
+ * default parameter and silently give you a lesson.
+ */
+function mount(round: Round, cue?: Cue, mode: 'lesson' | 'together' = 'lesson') {
   const log: Recorded = { answers: [], observations: [], interactions: [] }
   render(
     <GameStage
       round={round}
       nickname="Samaya"
       cue={cue}
+      driver={mode === 'lesson' ? 'Florie' : undefined}
       discoveries={{}}
       onAnswer={(answer, options) => log.answers.push({ answer, options })}
       onObserve={(input) => log.observations.push(input)}
@@ -253,6 +263,53 @@ describe('The Opposite Game', () => {
     expect(log.answers).toHaveLength(0)
   })
 
+  /* --- Together mode: no teacher, no cue, a grown-up in the room --- */
+
+  it('together mode: the round supplies the instruction, so it plays with no cue', () => {
+    const round = screenRound()
+    if (round.game !== 'opposite-game') throw new Error('wrong game')
+    const pair = round.pairs[0]
+
+    // No cue at all — exactly what the /play route passes.
+    const log = mount(round, undefined, 'together')
+
+    // The instruction on the command card came from the round, not a teacher.
+    // (Scoped to the card: the label also appears in the rule list above.)
+    expect(document.querySelector('.command-word')?.textContent).toBe(pair.command.label)
+
+    fireEvent.click(screen.getByRole('button', { name: pair.opposite.label }))
+    expect(log.answers.at(-1)!.options?.correct).toBe(true)
+  })
+
+  it('together mode: a wrong tap is still only a wobble', () => {
+    const round = screenRound()
+    if (round.game !== 'opposite-game') throw new Error('wrong game')
+    const pair = round.pairs[0]
+
+    const log = mount(round, undefined, 'together')
+
+    fireEvent.click(screen.getByRole('button', { name: pair.command.label }))
+    expect(log.answers.at(-1)!.options?.correct).toBe(false)
+    expect(screen.getByText(/brain brakes wobbled/i)).toBeTruthy()
+  })
+
+  it('together mode: names nobody — the grown-up is in the room', () => {
+    mount(screenRound(), undefined, 'together')
+    expect(screen.queryByText(/Florie/)).toBeNull()
+    expect(screen.getByText(/Do the opposite of/)).toBeTruthy()
+    expect(screen.getByText(/If you hear/)).toBeTruthy()
+  })
+
+  it('together mode: a body round asks the child to show their grown-up', () => {
+    const round = mustRound(
+      'opposite-game',
+      settings({ 'opposite-game': { level: 1, mode: 'observed' } }),
+    )
+    mount(round, undefined, 'together')
+    expect(screen.getByText(/Show your grown-up with your body/)).toBeTruthy()
+    expect(screen.queryByText(/Florie/)).toBeNull()
+  })
+
   it('keeps the command but changes its meaning on a rule switch', () => {
     const pairs = OPPOSITE_PAIRS.slice(0, 2)
     const switched = switchRule(pairs)
@@ -277,6 +334,19 @@ describe('The Opposite Game', () => {
 /* ------------------------------------------------------------------ */
 
 describe('Mirror Face Charades', () => {
+  it('together mode: the grown-up is in the room, so there is no video call', () => {
+    const round = mustRound(
+      'mirror-faces',
+      settings({
+        'mirror-faces': { ...DEFAULT_SETTINGS['mirror-faces'], mode: 'child-face' },
+      }),
+    )
+    mount(round, undefined, 'together')
+    expect(screen.getByText(/Show your grown-up/)).toBeTruthy()
+    expect(screen.queryByText(/video call/)).toBeNull()
+    expect(screen.queryByText(/Florie/)).toBeNull()
+  })
+
   it('records a reading without ever marking it', () => {
     const round = mustRound('mirror-faces', DEFAULT_SETTINGS)
     if (round.game !== 'mirror-faces') throw new Error('wrong game')
@@ -484,5 +554,11 @@ describe('Freeze Dance', () => {
   it('works with no cue at all, so the teacher can use their own music', () => {
     mount(round())
     expect(screen.getByText(/Wait for Florie to start the music/)).toBeTruthy()
+  })
+
+  it('together mode: the family puts their own music on, and nobody is named', () => {
+    mount(round(), undefined, 'together')
+    expect(screen.getByText(/Put your music on/)).toBeTruthy()
+    expect(screen.queryByText(/Florie/)).toBeNull()
   })
 })

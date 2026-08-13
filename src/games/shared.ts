@@ -32,6 +32,17 @@ export type GameProps<R extends Round> = {
   nickname: string
   /** The teacher's live instruction, if one is open. */
   cue?: Cue
+  /**
+   * Who is calling the game, when that is someone the child can name.
+   *
+   *   'Florie'   — a live lesson: the child is on a call and the teacher drives.
+   *   undefined  — together mode: the grown-up is in the room, so the copy speaks
+   *                to them directly rather than naming anyone.
+   *
+   * Deliberately family-shape neutral when absent — "your grown-up" reads right
+   * whether it is a mother, a grandmother, or an aunt playing.
+   */
+  driver?: string
   /** Discovered bonds so far, keyed by target. */
   discoveries: Record<number, Bond[]>
   /** For games with a right answer. */

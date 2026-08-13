@@ -159,6 +159,9 @@ export function StudentSession() {
           round={round}
           nickname={nickname}
           cue={snapshot.cue}
+          // A live lesson has a teacher the child can name. Together mode leaves
+          // this undefined, and the copy speaks to the grown-up in the room instead.
+          driver="Florie"
           discoveries={snapshot.discoveries}
           onAnswer={onAnswer}
           onObserve={onObserve}
