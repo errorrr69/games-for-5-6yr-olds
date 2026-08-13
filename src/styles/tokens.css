@@ -1,0 +1,85 @@
+/* ------------------------------------------------------------------ *
+ * Design tokens. Every colour in the app comes from here — no ad-hoc
+ * hex values in component styles (spec §41).
+ * ------------------------------------------------------------------ */
+
+:root {
+  /* Neutrals */
+  --cream: #fdf7ee;
+  --paper: #ffffff;
+  --ink: #2b2320;
+  --muted: #7a6c60;
+  --line: #ece0cf;
+  --line-soft: #f5ece0;
+
+  /* Brand */
+  --coral: #e8613c;
+  --coral-deep: #cc4d2b;
+  --teal: #1f5b4e;
+  --teal-soft: #d9ede6;
+  --butter: #ffe3a3;
+  --lilac: #e7e0f8;
+  --sky: #cfe6f5;
+  --leaf: #4f8f5f;
+  --berry: #e0455f;
+  --plum: #6f5aa8;
+
+  /* Semantic */
+  --success: #3f8f68;
+  --success-soft: #dff1e7;
+  --attention: #c98b1f;
+  --attention-soft: #fdefd0;
+
+  /* Type */
+  --font-display: 'Bricolage Grotesque', 'Trebuchet MS', Georgia, serif;
+  --font-body: Karla, 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Space — a 4px rhythm keeps everything on a grid */
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s5: 1.5rem;
+  --s6: 2rem;
+  --s7: 3rem;
+  --s8: 4rem;
+
+  /* Shape */
+  --radius-sm: 10px;
+  --radius: 18px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 2px 8px rgba(70, 52, 32, 0.06);
+  --shadow: 0 12px 32px rgba(70, 52, 32, 0.09);
+  --shadow-lg: 0 24px 60px rgba(70, 52, 32, 0.13);
+
+  /* Layout */
+  --page: 1180px;
+  --tap: 56px;
+
+  /* Per-game theming — overridden by .theme-* below */
+  --stage-wash: var(--teal-soft);
+  --accent: var(--teal);
+}
+
+.theme-flash-hide {
+  --stage-wash: var(--lilac);
+  --accent: var(--plum);
+}
+.theme-feed-monster {
+  --stage-wash: #fce9e2;
+  --accent: var(--berry);
+}
+.theme-bond-garden {
+  --stage-wash: #e6f2e0;
+  --accent: var(--leaf);
+}
+.theme-ten-frame {
+  --stage-wash: #fff3d9;
+  --accent: var(--coral);
+}
+.theme-number-line {
+  --stage-wash: #ddf0e4;
+  --accent: #2f7d5f;
+}

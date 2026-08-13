@@ -1,0 +1,938 @@
+/* ------------------------------------------------------------------ *
+ * Reading Adventures.
+ *
+ * Lowercase everywhere in phonics activities (spec §28), generous tap
+ * targets, and a distinct world per game without becoming an arcade.
+ * ------------------------------------------------------------------ */
+
+.theme-robot-translator {
+  --stage-wash: #dde9f7;
+  --accent: #2f6ea8;
+}
+.theme-sound-safari {
+  --stage-wash: #e6f2e2;
+  --accent: #4a7f57;
+}
+.theme-skywriter {
+  --stage-wash: #e2e2f5;
+  --accent: #5b4b96;
+}
+.theme-sound-box-factory {
+  --stage-wash: #fdeee0;
+  --accent: #c96a2b;
+}
+.theme-monster-lab {
+  --stage-wash: #efe5fa;
+  --accent: #7a5aa8;
+}
+.theme-digraph-detectives {
+  --stage-wash: #e9eef5;
+  --accent: #3f5d80;
+}
+.theme-blend-train {
+  --stage-wash: #fde9e9;
+  --accent: #c0304a;
+}
+.theme-magic-e-wizard {
+  --stage-wash: #ece4f8;
+  --accent: #6a4aa0;
+}
+.theme-tricky-treasure {
+  --stage-wash: #e2f0f7;
+  --accent: #2c6f92;
+}
+.theme-word-ladder {
+  --stage-wash: #f6ecdd;
+  --accent: #a56a2f;
+}
+.theme-story-quest {
+  --stage-wash: #eaf1e8;
+  --accent: #4a7f57;
+}
+
+/* Words and letters ------------------------------------------------- */
+
+.big-word {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 9vw, 4.4rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  /* Phonics activities stay lowercase unless there is a teaching reason. */
+  text-transform: lowercase;
+}
+
+.big-word.is-chunked {
+  display: flex;
+  gap: var(--s2);
+  justify-content: center;
+}
+
+.big-word .chunk {
+  padding: 0 var(--s3);
+  border-radius: var(--radius);
+  background: var(--stage-wash);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.big-word .chunk.is-highlight {
+  background: var(--butter);
+}
+
+.big-word.is-gapped .gap {
+  display: inline-block;
+  min-width: 2ch;
+  border-bottom: 6px solid var(--accent);
+  color: var(--accent);
+}
+
+.say-it {
+  display: grid;
+  gap: var(--s2);
+  justify-items: center;
+  padding: var(--s4) var(--s6);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.say-it-cue {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.say-it-word {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8vw, 4rem);
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+/* Sound boxes + grapheme tray --------------------------------------- */
+
+.sound-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s3);
+}
+
+.sound-box-wrap {
+  display: grid;
+  gap: var(--s1);
+  justify-items: center;
+}
+
+.sound-box-wrap small {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.sound-box {
+  width: 4.6rem;
+  height: 4.6rem;
+  display: grid;
+  place-items: center;
+  border: 4px dashed var(--accent);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.sound-box.is-filled {
+  border-style: solid;
+  background: var(--paper);
+}
+
+.sound-box.is-locked {
+  border-color: var(--line);
+  color: var(--muted);
+  background: var(--line-soft);
+}
+
+.sound-box[data-ready] {
+  transform: scale(1.06);
+  box-shadow: 0 0 0 5px var(--butter);
+  cursor: pointer;
+}
+
+.grapheme-tray,
+.sort-tray {
+  width: min(100%, 40rem);
+  display: grid;
+  gap: var(--s3);
+  padding: var(--s4);
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.grapheme-tile {
+  min-width: 3.6rem;
+  min-height: 3.6rem;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 var(--s3);
+  border: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  cursor: grab;
+  touch-action: none;
+  transition: transform 0.15s ease;
+}
+
+.grapheme-tile:hover {
+  transform: translateY(-3px);
+}
+
+.grapheme-tile[data-selected] {
+  transform: translateY(-8px) scale(1.1);
+  background: var(--accent);
+  color: #fff;
+}
+
+.grapheme-tile[data-dragging] {
+  opacity: 0.25;
+}
+
+span.drag-ghost.grapheme-tile,
+span.drag-ghost.word-tile {
+  width: auto;
+  position: fixed;
+}
+
+/* Big choice cards --------------------------------------------------- */
+
+.card-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s3);
+}
+
+.reading-card {
+  min-width: 6rem;
+  min-height: 6rem;
+  display: grid;
+  place-items: center;
+  gap: var(--s1);
+  padding: var(--s3) var(--s4);
+  border: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.reading-card:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.reading-card[aria-pressed='true'] {
+  background: var(--accent);
+  color: #fff;
+}
+
+.reading-card .word-picture {
+  width: 5rem;
+}
+
+.reading-card:disabled {
+  opacity: 0.55;
+}
+
+/* Sorting ------------------------------------------------------------ */
+
+.word-tile {
+  padding: var(--s2) var(--s4);
+  border: 3px solid var(--accent);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  cursor: grab;
+  touch-action: none;
+}
+
+.word-tile[data-selected] {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-6px);
+}
+
+.word-tile.is-placed {
+  font-size: 1rem;
+  border-width: 2px;
+  cursor: default;
+}
+
+.sort-bins {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--s3);
+  width: min(100%, 44rem);
+}
+
+.sort-bin {
+  display: grid;
+  justify-items: center;
+  gap: var(--s2);
+  padding: var(--s4) var(--s3);
+  border: 3px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.7);
+  transition: border-color 0.15s ease;
+}
+
+.sort-bin[data-ready] {
+  border-color: var(--accent);
+  cursor: pointer;
+}
+
+.sort-bin strong {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  text-transform: lowercase;
+}
+
+.sort-bin small {
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.sort-bin-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s1);
+  min-height: 2rem;
+}
+
+.art-detective {
+  width: 4.5rem;
+}
+
+/* Robot Translator ---------------------------------------------------- */
+
+.robot-figure {
+  width: min(12rem, 42vw);
+}
+
+.art-robot.is-talking {
+  animation: robot-bob 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes robot-bob {
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.sound-pulses {
+  display: flex;
+  gap: var(--s4);
+}
+
+.sound-pulse {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.25;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.sound-pulse.is-active {
+  opacity: 1;
+  transform: scale(1.5);
+}
+
+/* Sound Safari --------------------------------------------------------- */
+
+.hunt-sound {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  font-weight: 700;
+  color: var(--accent);
+  padding: var(--s2) var(--s6);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.safari-scene {
+  position: relative;
+  width: min(46rem, 100%);
+  aspect-ratio: 20 / 11;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.safari-object {
+  position: absolute;
+  translate: -50% -50%;
+  width: 14%;
+  min-width: 3rem;
+  padding: 4px;
+  border: 3px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  transition: transform 0.15s ease;
+}
+
+.safari-object:hover {
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+.safari-object.is-found {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+
+.safari-object.is-missed {
+  border-color: var(--attention);
+  opacity: 0.6;
+}
+
+/* Skywriter ------------------------------------------------------------ */
+
+.theme-skywriter {
+  background: linear-gradient(180deg, #3b3358, #6a5f94 60%, var(--paper));
+  color: #fff;
+}
+
+.theme-skywriter .stage h1,
+.theme-skywriter .stage-question,
+.theme-skywriter .feedback,
+.theme-skywriter .mirror-hint {
+  color: #fff;
+}
+
+.theme-skywriter .stage-eyebrow {
+  color: var(--butter);
+}
+
+.theme-skywriter .reading-card {
+  border-color: #fff;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-skywriter .reading-card[aria-pressed='true'] {
+  background: #fff;
+  color: #4a3f78;
+}
+
+.sky-letter {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 20vw, 9rem);
+  font-weight: 700;
+  color: var(--butter);
+  text-shadow: 0 0 26px rgba(255, 227, 163, 0.7);
+  line-height: 1;
+}
+
+.sky-board {
+  position: relative;
+  width: min(22rem, 76vw);
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.2);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.sky-guide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 13rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.sky-trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 8px rgba(255, 209, 102, 0.8));
+  pointer-events: none;
+}
+
+/* Sound Box Factory ----------------------------------------------------- */
+
+.factory-picture {
+  width: 6rem;
+}
+
+.counter-row {
+  display: flex;
+  gap: var(--s3);
+  min-height: 3rem;
+}
+
+.sound-counter {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: drop 0.25s ease;
+}
+
+/* Monster Name Lab ------------------------------------------------------ */
+
+.lab-monster {
+  width: min(13rem, 46vw);
+}
+
+.lab-controls {
+  display: flex;
+  gap: var(--s3);
+}
+
+/* Blend Train ------------------------------------------------------------ */
+
+.train {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+.train-engine {
+  width: 6rem;
+}
+
+.carriage {
+  display: grid;
+  justify-items: center;
+}
+
+.carriage-body {
+  width: 3.6rem;
+  height: 3.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 8px 8px 4px 4px;
+  background: var(--line-soft);
+  box-shadow: inset 0 0 0 3px var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.carriage.is-filled .carriage-body {
+  background: var(--paper);
+}
+
+.carriage-wheels {
+  display: flex;
+  gap: var(--s3);
+  margin-top: 2px;
+}
+
+.carriage-wheels i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3d2140;
+}
+
+/* Magic-e Wizard --------------------------------------------------------- */
+
+.wand {
+  width: 5rem;
+  transition: transform 0.3s ease;
+}
+
+.wand.is-cast {
+  transform: rotate(-18deg) scale(1.08);
+}
+
+.magic-word .magic-e {
+  color: var(--accent);
+  text-shadow: 0 0 16px rgba(122, 90, 168, 0.6);
+  animation: pin-in 0.3s ease;
+}
+
+.which-pictures {
+  display: flex;
+  gap: var(--s5);
+}
+
+.which-pictures .word-picture {
+  width: 6rem;
+}
+
+/* Tricky Word Treasure ---------------------------------------------------- */
+
+.treasure-target {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  font-weight: 700;
+  padding: var(--s2) var(--s6);
+  border-radius: var(--radius-pill);
+  background: var(--butter);
+}
+
+.gem-row .reading-card {
+  min-width: 7rem;
+}
+
+.gem-art {
+  width: 3rem;
+}
+
+.gem-word {
+  font-size: 1.2rem;
+}
+
+.flash-gem {
+  display: grid;
+  justify-items: center;
+  gap: var(--s2);
+  transition: opacity 0.2s ease;
+}
+
+.flash-gem svg {
+  width: 5rem;
+}
+
+.flash-gem span {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.flash-gem.is-hidden {
+  opacity: 0;
+}
+
+.tricky-sentence {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
+  font-weight: 600;
+}
+
+.tricky-sentence .gap {
+  color: var(--accent);
+  border-bottom: 5px solid var(--accent);
+  padding-inline: var(--s2);
+}
+
+/* Word Ladder -------------------------------------------------------------- */
+
+.ladder-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s5);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.ladder-art {
+  width: 6rem;
+}
+
+.ladder-work {
+  display: grid;
+  gap: var(--s3);
+  justify-items: center;
+  flex: 1 1 20rem;
+}
+
+.ladder-current {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  color: var(--accent);
+}
+
+/* Story Quest --------------------------------------------------------------- */
+
+.story-page {
+  position: relative;
+  width: min(44rem, 100%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--paper);
+}
+
+.story-scene {
+  display: block;
+  width: 100%;
+  height: 11rem;
+}
+
+.story-text {
+  padding: var(--s5) var(--s4);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.story-word {
+  display: inline-block;
+}
+
+.chunk-help {
+  display: grid;
+  gap: var(--s2);
+  justify-items: center;
+  padding: var(--s4);
+  border-radius: var(--radius-lg);
+  background: var(--butter);
+}
+
+.chunk-help .big-word {
+  font-size: clamp(2rem, 7vw, 3rem);
+}
+
+.story-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+
+.story-progress {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.retell-prompts {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.retell-card {
+  display: grid;
+  gap: var(--s1);
+  justify-items: center;
+  min-width: 7rem;
+  padding: var(--s4);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+}
+
+/* Teacher-side: Sounds We Know ---------------------------------------------- */
+
+.sounds-panel {
+  display: grid;
+  gap: var(--s4);
+}
+
+.sound-set {
+  display: grid;
+  gap: var(--s2);
+}
+
+.sound-set-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.sound-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+.sound-chip {
+  display: grid;
+  justify-items: center;
+  min-width: 3.2rem;
+  padding: var(--s2);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--muted);
+  line-height: 1.1;
+}
+
+.sound-chip strong {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+.sound-chip small {
+  font-size: 0.65rem;
+}
+
+.sound-chip[aria-pressed='true'] {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.sound-chip.is-word {
+  font-weight: 700;
+  padding-inline: var(--s3);
+}
+
+.sound-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s5);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--line);
+}
+
+.sound-stats dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.sound-stats dd {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.cue-button.is-word {
+  flex: 0 0 auto;
+  min-height: 40px;
+  font-family: var(--font-display);
+  text-transform: lowercase;
+}
+
+.tag-reading {
+  background: #dde9f7;
+  color: #2f6ea8;
+}
+
+.game-art-letter {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: lowercase;
+}
+
+.game-art-boxes {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-art-boxes i {
+  width: 10px;
+  height: 12px;
+  border: 2px solid var(--coral);
+  border-radius: 3px;
+}
+
+.game-art-book {
+  display: flex;
+  gap: 3px;
+}
+
+.game-art-book i {
+  width: 12px;
+  height: 16px;
+  border-radius: 2px 3px 3px 2px;
+  background: var(--leaf);
+}
+
+.game-art-book i:last-child {
+  background: var(--butter);
+}
+
+@media (max-width: 640px) {
+  .sound-box {
+    width: 3.6rem;
+    height: 3.6rem;
+    font-size: 1.6rem;
+  }
+  .grapheme-tile {
+    min-width: 3rem;
+    min-height: 3rem;
+    font-size: 1.4rem;
+  }
+  .reading-card {
+    min-width: 5rem;
+    min-height: 5rem;
+    font-size: 1.2rem;
+  }
+}
+
+/* Two-day mastery ---------------------------------------------------------- */
+
+.mastery {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s4);
+  border-radius: var(--radius);
+  background: var(--line-soft);
+}
+
+.mastery-status {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.mastery-status.is-secure {
+  color: var(--success);
+}
+
+.mastery-status.is-emerging {
+  color: var(--attention);
+}
+
+.mastery-status.is-not-started {
+  color: var(--muted);
+}
+
+.mastery-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  color: var(--muted);
+  font-size: 0.88rem;
+}

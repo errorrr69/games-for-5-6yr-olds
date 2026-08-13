@@ -1,0 +1,873 @@
+/* ------------------------------------------------------------------ *
+ * Feelings & Focus.
+ *
+ * Belongs to the same app as the maths games, with its own personality:
+ * warmer, calmer, more room to breathe. Never an arcade (spec §19).
+ * ------------------------------------------------------------------ */
+
+.theme-feeling-thermometer {
+  --stage-wash: #fdeadf;
+  --accent: #d9694a;
+}
+.theme-opposite-game {
+  --stage-wash: #e4eefb;
+  --accent: #2f6ea8;
+}
+.theme-mirror-faces {
+  --stage-wash: #f3eafb;
+  --accent: #7a5aa8;
+}
+.theme-scavenger-hunt {
+  --stage-wash: #eaf3e6;
+  --accent: #4a7f57;
+}
+.theme-rock-buddy {
+  --stage-wash: #e6e6f7;
+  --accent: #5b4b96;
+}
+.theme-freeze-dance {
+  --stage-wash: #fff0d9;
+  --accent: #d98c1f;
+}
+
+/* Shared word cards ------------------------------------------------- */
+
+.word-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s2);
+  max-width: 46rem;
+}
+
+.word-card {
+  min-height: var(--tap);
+  padding: var(--s2) var(--s5);
+  border: 3px solid var(--accent);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+
+.word-card:hover {
+  transform: translateY(-3px);
+  background: var(--accent);
+  color: #fff;
+}
+
+.word-card[aria-pressed='true'] {
+  background: var(--accent);
+  color: #fff;
+}
+
+.strategy-card {
+  border-style: dashed;
+}
+
+.stage-question {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+  font-weight: 600;
+  color: var(--ink);
+  max-width: 30ch;
+}
+
+/* Feeling Thermometer ----------------------------------------------- */
+
+.thermo-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+
+.thermo-art {
+  width: 5.5rem;
+}
+
+.thermo-scale {
+  display: grid;
+  gap: var(--s2);
+  width: min(24rem, 100%);
+}
+
+.thermo-step {
+  width: 100%;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2) var(--s4);
+  text-align: left;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.thermo-step:hover,
+.thermo-step[aria-pressed='true'] {
+  transform: translateX(4px);
+  border-color: var(--accent);
+}
+
+.thermo-step[aria-pressed='true'] {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.thermo-number {
+  grid-row: span 2;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #33291f;
+}
+
+.level-1 .thermo-number {
+  background: #7fc49a;
+}
+.level-2 .thermo-number {
+  background: #b9d47f;
+}
+.level-3 .thermo-number {
+  background: #ffd166;
+}
+.level-4 .thermo-number {
+  background: #f4a259;
+}
+.level-5 .thermo-number {
+  background: #ef7d6a;
+}
+
+.thermo-word {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.thermo-step small {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.thermo-done {
+  display: grid;
+  justify-items: center;
+  gap: var(--s4);
+}
+
+.thermo-final {
+  width: 5rem;
+}
+
+.feeling-summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  font-family: var(--font-display);
+}
+
+.feeling-summary strong {
+  font-size: 1.8rem;
+  color: var(--accent);
+}
+
+.feeling-summary span {
+  font-size: 1.3rem;
+}
+
+.thermo-thanks {
+  color: var(--muted);
+  max-width: 32ch;
+}
+
+/* Body Detective ----------------------------------------------------- */
+
+.body-detective {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+
+.body-figure {
+  position: relative;
+  width: min(11rem, 40vw);
+}
+
+.body-pin {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px rgba(217, 105, 74, 0.25);
+  animation: pin-in 0.25s ease;
+}
+
+@keyframes pin-in {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+}
+
+.body-clues {
+  max-width: 26rem;
+}
+
+/* The Opposite Game -------------------------------------------------- */
+
+.rule-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s3);
+}
+
+.rule-card {
+  display: grid;
+  justify-items: center;
+  gap: var(--s1);
+  padding: var(--s3) var(--s5);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.75);
+  border: 2px dashed var(--accent);
+}
+
+.rule-card small {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.rule-said strong,
+.rule-do strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+.rule-do strong {
+  color: var(--accent);
+}
+
+.rule-arrow {
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.command-card {
+  width: min(30rem, 100%);
+  display: grid;
+  justify-items: center;
+  gap: var(--s1);
+  padding: var(--s5);
+  border-radius: var(--radius-lg);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.command-card.is-waiting {
+  background: var(--line-soft);
+  color: var(--muted);
+  box-shadow: none;
+}
+
+.command-card.is-wobble {
+  animation: wobble 0.45s ease-in-out 2;
+}
+
+.command-said {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.command-word {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.command-detail {
+  font-weight: 600;
+}
+
+.art-brakes {
+  width: 7rem;
+}
+
+.opposite-choices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s2);
+}
+
+.opposite-card {
+  min-height: 64px;
+  padding: 0 var(--s5);
+  border: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.opposite-card:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.opposite-card:disabled {
+  opacity: 0.5;
+}
+
+/* Mirror Face Charades ----------------------------------------------- */
+
+.mirror-frame {
+  width: min(18rem, 62vw);
+  padding: var(--s4);
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 0 0 10px rgba(122, 90, 168, 0.14), var(--shadow);
+}
+
+.art-face {
+  width: 100%;
+}
+
+.face-card-big {
+  display: grid;
+  justify-items: center;
+  padding: var(--s6) var(--s7);
+  border-radius: var(--radius-lg);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.face-word {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.face-word-sub {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  opacity: 0.9;
+}
+
+.silly-guess {
+  display: grid;
+  justify-items: center;
+  gap: var(--s3);
+  padding: var(--s4);
+  border-radius: var(--radius);
+  background: var(--butter);
+  max-width: 30rem;
+}
+
+.noo-button {
+  font-size: 1.2rem;
+}
+
+.mirror-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 34ch;
+}
+
+/* Character Scavenger Hunt ------------------------------------------- */
+
+.hunt-scene {
+  position: relative;
+  width: min(46rem, 100%);
+  aspect-ratio: 20 / 11;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.scene-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hunt-figure {
+  position: absolute;
+  translate: -50% -50%;
+  width: 15%;
+  min-width: 3.4rem;
+  padding: 0;
+  border: 3px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.hunt-figure:hover:not(:disabled),
+.hunt-figure:focus-visible {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: var(--accent);
+}
+
+.hunt-figure[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.hunt-figure:disabled {
+  cursor: default;
+}
+
+.figure-art {
+  width: 100%;
+}
+
+.hunt-picked {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+/* Rock the Buddy ------------------------------------------------------ */
+
+.theme-rock-buddy {
+  background: linear-gradient(180deg, #3b3358, #6a5f94 55%, var(--paper));
+  color: #fff;
+}
+
+.theme-rock-buddy .stage-eyebrow {
+  color: var(--butter);
+}
+
+.theme-rock-buddy .stage h1,
+.theme-rock-buddy .stage-question,
+.theme-rock-buddy .breath-count,
+.theme-rock-buddy .buddy-note,
+.theme-rock-buddy .buddy-options {
+  color: #fff;
+}
+
+.theme-rock-buddy .word-card {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.theme-rock-buddy .word-card:hover {
+  background: #fff;
+  color: #4a3f78;
+}
+
+.buddy-setup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s5);
+  flex-wrap: wrap;
+}
+
+.buddy-art {
+  width: min(13rem, 46vw);
+}
+
+.buddy-options {
+  display: grid;
+  gap: var(--s2);
+  text-align: left;
+  font-size: 1.05rem;
+}
+
+.buddy-options li::before {
+  content: '· ';
+  opacity: 0.7;
+}
+
+.buddy-note {
+  opacity: 0.85;
+}
+
+.buddy-stage {
+  display: grid;
+  place-items: center;
+  min-height: 15rem;
+}
+
+/* The buddy rises on the in-breath and settles on the out-breath. */
+.buddy-stage .art-buddy {
+  transition: transform var(--in) cubic-bezier(0.4, 0, 0.3, 1);
+  transform: translateY(0) scale(1);
+}
+
+.buddy-stage.phase-in .art-buddy {
+  transform: translateY(-28px) scale(1.08);
+}
+
+.buddy-stage.phase-hold .art-buddy {
+  transform: translateY(-28px) scale(1.08);
+}
+
+.buddy-stage.phase-out .art-buddy {
+  transition-duration: var(--out);
+  transform: translateY(6px) scale(0.97);
+}
+
+.buddy-stage.phase-done .art-buddy {
+  transform: translateY(6px) scale(0.97);
+}
+
+.breath-count {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+/* Freeze Dance -------------------------------------------------------- */
+
+.theme-freeze-dance {
+  transition: background 0.25s ease;
+}
+
+.theme-freeze-dance.is-frozen {
+  --stage-wash: #d9edf7;
+  background: linear-gradient(180deg, #bcdff0, #eaf6fb 60%, var(--paper));
+}
+
+.freeze-headline {
+  font-size: clamp(2.4rem, 9vw, 4.4rem) !important;
+  letter-spacing: -0.02em;
+}
+
+.is-frozen .freeze-headline {
+  color: #2c6f92;
+}
+
+.freeze-detail {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.freeze-floor {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 13rem;
+  width: 100%;
+}
+
+.freeze-flake {
+  position: absolute;
+  top: 0;
+  right: 12%;
+  width: 3.5rem;
+  animation: pin-in 0.3s ease;
+}
+
+.dance-floor {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s3);
+  height: 9rem;
+}
+
+.dance-shape {
+  display: block;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 40% 60% 55% 45%;
+}
+
+.is-dancing .dance-shape {
+  animation: boogie 0.7s ease-in-out infinite alternate;
+}
+
+.is-frozen .dance-shape {
+  animation: none;
+  filter: grayscale(0.25) brightness(1.06);
+  box-shadow: 0 0 0 4px rgba(126, 196, 232, 0.5);
+}
+
+@keyframes boogie {
+  from {
+    transform: translateY(0) rotate(-8deg) scale(1);
+  }
+  to {
+    transform: translateY(-34px) rotate(8deg) scale(1.12);
+  }
+}
+
+.freeze-rule {
+  padding: var(--s2) var(--s5);
+  border-radius: var(--radius-pill);
+  background: var(--butter);
+  font-weight: 700;
+}
+
+/* Teacher-side additions ---------------------------------------------- */
+
+.game-library {
+  display: grid;
+  gap: var(--s5);
+}
+
+.game-category-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--s2);
+  padding-bottom: var(--s2);
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-tag {
+  margin-left: auto;
+  padding: 2px var(--s3);
+  border-radius: var(--radius-pill);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tag-maths {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.tag-feelings {
+  background: #f3eafb;
+  color: #7a5aa8;
+}
+
+.quick-break {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3) var(--s4);
+  padding: var(--s3) var(--s4);
+}
+
+.quick-break-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.quick-break-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+
+.cue-panel {
+  display: grid;
+  gap: var(--s3);
+  padding: var(--s4);
+  border-radius: var(--radius);
+  border: 2px dashed var(--line);
+  background: var(--line-soft);
+}
+
+.cue-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cue-title em {
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.cue-row {
+  display: flex;
+  gap: var(--s2);
+}
+
+.cue-row.is-wrap {
+  flex-wrap: wrap;
+}
+
+.cue-button {
+  flex: 1 1 auto;
+  min-height: 48px;
+  padding: 0 var(--s4);
+  border: 2px solid var(--teal);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.cue-button:hover:not(:disabled) {
+  background: var(--teal);
+  color: #fff;
+}
+
+.cue-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cue-button.is-big {
+  min-height: 64px;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+.cue-button.is-positive {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.cue-button.is-positive:hover:not(:disabled) {
+  background: var(--success);
+}
+
+.cue-button.is-cold {
+  border-color: #2c6f92;
+  color: #2c6f92;
+}
+
+.cue-button.is-cold:hover:not(:disabled) {
+  background: #2c6f92;
+}
+
+.cue-hint,
+.control-hint {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.cue-hint.is-standout {
+  padding: var(--s2) var(--s3);
+  border-radius: var(--radius-sm);
+  background: var(--attention-soft);
+  color: #6b4d10;
+  font-weight: 600;
+}
+
+.cue-say {
+  padding: var(--s2) var(--s3);
+  border-left: 4px solid var(--teal);
+  background: var(--paper);
+  font-size: 0.92rem;
+}
+
+.coaching-tip {
+  padding: var(--s3) var(--s4);
+  border-radius: var(--radius);
+  background: var(--teal-soft);
+  color: var(--teal);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.coaching-tip::before {
+  content: '💡 ';
+}
+
+.answer.is-observation {
+  border-left-color: #7a5aa8;
+  background: #f6f0fb;
+}
+
+.answer.is-marked {
+  border-left-color: var(--muted);
+  background: var(--line-soft);
+}
+
+.observation-value,
+.mark-label {
+  font-family: var(--font-display);
+  font-size: 1.5rem !important;
+  line-height: 1.25;
+}
+
+.possible {
+  display: grid;
+  gap: 2px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.answer-verdict.is-quiet {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.history li.is-note {
+  background: #f3eafb;
+  color: #57407c;
+}
+
+.summary-group {
+  width: 100%;
+  display: grid;
+  gap: var(--s3);
+}
+
+.summary-category {
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.summary-notes li::before {
+  content: '· ';
+}
+
+.summary-disclaimer {
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: 42ch;
+}
+
+@media (max-width: 640px) {
+  .thermo-step {
+    min-height: 56px;
+  }
+  .word-card {
+    padding-inline: var(--s4);
+    font-size: 0.95rem;
+  }
+}

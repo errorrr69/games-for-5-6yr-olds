@@ -1,0 +1,253 @@
+/* Home + teacher dashboard ---------------------------------------- */
+
+.hero {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(var(--s6), 6vw, var(--s8));
+  padding-block: var(--s6);
+}
+
+.hero-copy {
+  display: grid;
+  gap: var(--s4);
+  justify-items: start;
+}
+
+.hero h1 {
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--teal);
+  background: linear-gradient(transparent 62%, var(--butter) 62%);
+  padding-inline: 0.1em;
+}
+
+.promises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s4);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.promises li {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.promises li::before {
+  content: '✓';
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.hero-art {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-height: 30rem;
+  border-radius: 46% 46% var(--radius-lg) var(--radius-lg);
+  background: linear-gradient(160deg, var(--teal-soft), var(--sky));
+  overflow: hidden;
+}
+
+.hero-sun {
+  position: absolute;
+  top: 8%;
+  right: 10%;
+  width: 5.5rem;
+  height: 5.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--butter);
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.hero-bubble {
+  position: absolute;
+  top: 20%;
+  left: 8%;
+  padding: var(--s3) var(--s5);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+.hero-monster {
+  position: absolute;
+  bottom: 16%;
+  left: 50%;
+  translate: -50% 0;
+  width: 42%;
+}
+
+.hero-float {
+  position: absolute;
+  width: 3.2rem;
+  animation: float 5s ease-in-out infinite;
+}
+
+.hero-float-1 {
+  top: 44%;
+  left: 12%;
+}
+.hero-float-2 {
+  top: 34%;
+  right: 12%;
+  animation-delay: 0.6s;
+}
+.hero-float-3 {
+  top: 58%;
+  right: 8%;
+  animation-delay: 1.2s;
+  width: 2.6rem;
+}
+.hero-float-4 {
+  bottom: 22%;
+  left: 6%;
+  animation-delay: 1.8s;
+  width: 4rem;
+}
+
+.hero-hill {
+  position: absolute;
+  inset: auto -8% -12%;
+  height: 34%;
+  border-radius: 50% 50% 0 0;
+  background: var(--teal);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--s3);
+  padding-top: var(--s5);
+}
+
+.hero-hill b {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--teal);
+  font-family: var(--font-display);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Dashboard -------------------------------------------------------- */
+
+.dashboard {
+  max-width: 44rem;
+  margin: auto;
+  display: grid;
+  gap: var(--s4);
+  justify-items: center;
+  text-align: center;
+  padding-block: var(--s6);
+}
+
+.dashboard-monster {
+  width: 9rem;
+}
+
+.dashboard h1 {
+  font-size: clamp(2rem, 4vw, 2.9rem);
+}
+
+.login-card {
+  width: 100%;
+  display: grid;
+  gap: var(--s4);
+  text-align: left;
+}
+
+.login-card label {
+  display: grid;
+  gap: var(--s2);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.start-session {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--s4);
+  text-align: left;
+  padding: var(--s5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.start-session:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.start-session-plus {
+  width: 3.4rem;
+  height: 3.4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--coral);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.start-session strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+.start-session small {
+  color: var(--muted);
+}
+
+.demo-note {
+  padding: var(--s3) var(--s4);
+  border-radius: var(--radius);
+  background: var(--butter);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: var(--s5);
+  }
+  .hero-art {
+    order: -1;
+    max-height: 20rem;
+    width: 100%;
+  }
+}
