@@ -1,0 +1,104 @@
+/* Together mode — one phone, a grown-up and a child side by side.
+ *
+ * The child gets the whole screen. The grown-up gets a quiet strip pinned to the
+ * bottom, deliberately understated: it is a set of controls for the adult, not
+ * part of the game, and nothing in it should read as a score or a reward.
+ */
+
+.together-play {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.together-play > .stage {
+  flex: 1;
+  /* Room for the strip, plus the home indicator on a phone. */
+  padding-bottom: calc(var(--s6) + 4.5rem);
+}
+
+.parent-strip {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+
+  display: flex;
+  gap: var(--s2);
+  justify-content: center;
+  flex-wrap: wrap;
+
+  padding: var(--s3) var(--s4);
+  /* Sits above the phone's home indicator rather than under it. */
+  padding-bottom: calc(var(--s3) + env(safe-area-inset-bottom, 0px));
+
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line-soft);
+}
+
+.parent-button {
+  min-height: var(--tap);
+  padding: 0 var(--s4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--muted);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.parent-button:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--cream);
+}
+
+.parent-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.parent-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* "Next" is the one the grown-up reaches for most, so it earns a little weight —
+   but stays quieter than anything the child is looking at. */
+.parent-button-next {
+  border-color: transparent;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.parent-button-next:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--teal-soft) 80%, var(--teal) 20%);
+  color: var(--teal);
+}
+
+/* Freeze Dance: the family supplies the music, so the grown-up calls the switch.
+   This one IS the game, so unlike the rest of the strip it speaks up. */
+.parent-button-primary {
+  border-color: transparent;
+  background: var(--coral);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(232, 97, 60, 0.24);
+}
+
+.parent-button-primary:hover:not(:disabled) {
+  background: var(--coral-deep);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parent-button {
+    transition: none;
+  }
+  .parent-button:active:not(:disabled) {
+    transform: none;
+  }
+}
