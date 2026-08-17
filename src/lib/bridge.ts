@@ -53,10 +53,16 @@ export const isEmbedded = (): boolean => typeof channel()?.postMessage === 'func
  * to interrupt a child mid-game.
  */
 export function postToMomzo(event: BridgeEvent): void {
-  const post = channel()?.postMessage
-  if (!post) return
+  const bridge = channel()
+  if (typeof bridge?.postMessage !== 'function') return
   try {
-    post(JSON.stringify(event))
+    // Call it as a METHOD. Detaching it first (`const post = bridge.postMessage`)
+    // loses the receiver, and Android's addJavascriptInterface proxy rejects an
+    // unbound invocation outright — which the catch below then swallows. That is
+    // exactly how this shipped silently broken: every session recorded, zero
+    // events, no error anywhere. A jsdom mock cannot reproduce it, because a
+    // plain function does not care about `this`.
+    bridge.postMessage(JSON.stringify(event))
   } catch {
     /* the game continues regardless */
   }

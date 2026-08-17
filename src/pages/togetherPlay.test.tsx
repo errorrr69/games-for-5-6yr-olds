@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { TogetherPlay, bucketFor } from './TogetherPlay'
 import { postToMomzo, isEmbedded, type BridgeEvent } from '../lib/bridge'
@@ -164,6 +164,29 @@ describe('/play/:gameId', () => {
     const summary = host.sent.find((e) => e.event === 'session_summary')
     expect(summary).toBeTruthy()
     expect(summary).toMatchObject({ game: 'ten-frame', rounds: 0, firstTime: 0 })
+  })
+
+  it('has already sent a rollup BEFORE any unmount, because a WebView may never unmount', () => {
+    // The load-bearing one. Momzo destroys the WebView when the game closes, so
+    // React's cleanup never runs and an unmount-only summary is simply lost. It
+    // shipped that way: a real 83-second session with two solved rounds stored a
+    // duration and nothing else. The rollup has to be current at every moment,
+    // not sent at a moment that is not guaranteed to arrive.
+    vi.useFakeTimers()
+    try {
+      playing('flash-hide')
+      act(() => void vi.advanceTimersByTime(60_000)) // show, then hide the dots
+
+      const keys = screen.getAllByRole('button', { name: /^\d$/ })
+      fireEvent.click(keys[0]) // the child answers — no Next, no unmount
+
+      const summaries = host.sent.filter((e) => e.event === 'session_summary')
+      expect(summaries.length).toBeGreaterThan(0)
+      // ...and it carries the play, not an empty shell.
+      expect(summaries[summaries.length - 1]).toMatchObject({ game: 'flash-hide', rounds: 1 })
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('gives Freeze Dance a switch, because the family brings the music', () => {

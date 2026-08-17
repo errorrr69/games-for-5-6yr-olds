@@ -108,24 +108,48 @@ export function TogetherPlay() {
     postToMomzo({ event: 'round_result', game: latest.current.game, ...result })
   }, [])
 
-  /** On the way out, send the rollup Momzo actually stores. */
-  useEffect(() => {
-    return () => {
-      const { responses: all, game: g } = latest.current
-      if (!g) return
-      const summary = summarise(all).find((s) => s.game === g)
-      postToMomzo({
-        event: 'session_summary',
-        game: g,
-        durationSec: Math.round((Date.now() - startedAt.current) / 1000),
-        rounds: summary?.rounds ?? 0,
-        firstTime: summary?.firstTime ?? 0,
-        anotherLook: summary?.anotherLook ?? 0,
-        stillExploring: summary?.stillExploring ?? 0,
-        notes: summary?.notes ?? [],
-      })
-    }
+  /** The rollup Momzo stores. Safe to call at any moment: summarise() is pure. */
+  const sendSummary = useCallback(() => {
+    const { responses: all, game: g } = latest.current
+    if (!g) return
+    const summary = summarise(all).find((s) => s.game === g)
+    postToMomzo({
+      event: 'session_summary',
+      game: g,
+      durationSec: Math.round((Date.now() - startedAt.current) / 1000),
+      rounds: summary?.rounds ?? 0,
+      firstTime: summary?.firstTime ?? 0,
+      anotherLook: summary?.anotherLook ?? 0,
+      stillExploring: summary?.stillExploring ?? 0,
+      notes: summary?.notes ?? [],
+    })
   }, [])
+
+  /**
+   * Keep the host's rollup CURRENT rather than sending it once on the way out.
+   *
+   * The way out is not a reliable moment. Momzo hosts this in a WebView and
+   * closing the game destroys that WebView outright — React never unmounts, the
+   * JS context simply stops, and an unmount-only summary is never sent. The host
+   * then stores a session with a duration and no content, which is precisely what
+   * shipped: 83 seconds of play, two solved rounds, `completed: false`.
+   *
+   * Re-sending after every answer removes the dependency on that moment entirely.
+   * Whenever the WebView dies, the host is already holding an accurate rollup, and
+   * it costs a handful of small messages per session. The host keeps the last one
+   * it saw.
+   *
+   * This stays strictly one-way (rule 1): the host still never calls into the game.
+   */
+  useEffect(() => {
+    if (!game || responses.length === 0) return
+    sendSummary()
+  }, [game, responses, sendSummary])
+
+  /** Still sent on a clean unmount — the plain-browser and route-change case. */
+  useEffect(() => {
+    return () => sendSummary()
+  }, [sendSummary])
 
   /* --- What the grown-up can do --------------------------------------- */
 
