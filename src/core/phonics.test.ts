@@ -6,7 +6,9 @@ import {
   GRAPHEMES,
   LADDERS,
   MAGIC_E_PAIRS,
+  SAFARI_OBJECT_SIZE,
   SAFARI_SCENES,
+  SAFARI_SCENE_ASPECT,
   STORIES,
   WORDS,
   canDecode,
@@ -22,6 +24,7 @@ import {
   picturableWords,
   storiesFor,
   storyIsReadable,
+  safariOverlap,
   targetsIn,
   wordByText,
   type PhonicsConfig,
@@ -358,6 +361,53 @@ describe('Sound Safari scenes', () => {
     const bedroom = SAFARI_SCENES.find((s) => s.id === 'bedroom')!
     expect(huntableSounds(bedroom, ['s'])).toEqual(['s'])
     expect(huntableSounds(bedroom, ['z'])).toEqual([])
+  })
+})
+
+/* ------------------------------------------------------------------ */
+
+describe('Sound Safari layout', () => {
+  /** Half an object, in each axis's own percentage. */
+  const halfX = SAFARI_OBJECT_SIZE / 2
+  const halfY = (SAFARI_OBJECT_SIZE * SAFARI_SCENE_ASPECT) / 2
+
+  it('draws every object at least as big as a tap target', () => {
+    // The narrowest phone the app is built for leaves the scene about 320px
+    // across. Anything below --tap (56px) is a target a five-year-old misses,
+    // and the whole game is tapping small things.
+    const NARROWEST_SCENE_PX = 320
+    const MIN_TAP_PX = 56
+    expect((SAFARI_OBJECT_SIZE / 100) * NARROWEST_SCENE_PX).toBeGreaterThanOrEqual(MIN_TAP_PX)
+  })
+
+  it('never lets two objects overlap', () => {
+    // The reason this is a test and not a comment: the positions are hand-typed
+    // numbers, and nothing about `obj('sock', 's', 28, 84)` tells you it has to
+    // clear the bed. Change a coordinate or the size and this is what notices.
+    for (const scene of SAFARI_SCENES) {
+      for (let i = 0; i < scene.objects.length; i++) {
+        for (let j = i + 1; j < scene.objects.length; j++) {
+          const [a, b] = [scene.objects[i], scene.objects[j]]
+          expect(
+            safariOverlap(a, b),
+            `${scene.id}: ${a.word} (${a.x},${a.y}) overlaps ${b.word} (${b.x},${b.y})`,
+          ).toBe(false)
+        }
+      }
+    }
+  })
+
+  it('keeps every object fully inside the scene', () => {
+    // Objects are centred on their coordinate, so half of one hangs past it.
+    // Half off the edge is half a picture to recognise and half a button to hit.
+    for (const scene of SAFARI_SCENES) {
+      for (const o of scene.objects) {
+        expect(o.x, `${scene.id}: ${o.word} x`).toBeGreaterThanOrEqual(halfX)
+        expect(o.x, `${scene.id}: ${o.word} x`).toBeLessThanOrEqual(100 - halfX)
+        expect(o.y, `${scene.id}: ${o.word} y`).toBeGreaterThanOrEqual(halfY)
+        expect(o.y, `${scene.id}: ${o.word} y`).toBeLessThanOrEqual(100 - halfY)
+      }
+    }
   })
 })
 

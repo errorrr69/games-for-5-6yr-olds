@@ -12,17 +12,29 @@
   --line: #ece0cf;
   --line-soft: #f5ece0;
 
-  /* Brand */
+  /* Brand
+   *
+   * Bright here means SATURATED, not pale. Most of these end up as text on a
+   * white card, so lightening them — the instinctive way to cheer a colour up —
+   * is the one change that makes them unreadable. `palette.test.ts` holds the
+   * line at 4.5:1 so the trade is made on purpose rather than by eye. */
   --coral: #e8613c;
   --coral-deep: #cc4d2b;
-  --teal: #1f5b4e;
-  --teal-soft: #d9ede6;
-  --butter: #ffe3a3;
-  --lilac: #e7e0f8;
-  --sky: #cfe6f5;
-  --leaf: #4f8f5f;
-  --berry: #e0455f;
-  --plum: #6f5aa8;
+  /* --coral is 3.4:1 on white: fine as a fill, not safe under white text.
+     This one is, and is what a coloured button uses. */
+  --coral-strong: #c2410c;
+  --teal: #0f766e;
+  --teal-soft: #c8f3e9;
+  --butter: #ffdc7a;
+  --lilac: #e0d4ff;
+  --sky: #b6e3ff;
+  --leaf: #17803d;
+  --berry: #d10f45;
+  --plum: #6d28d9;
+
+  /* "Go" — the one gradient in the app, and only the Next button wears it. */
+  --go-start: #c22e86;
+  --go-end: #6d28d9;
 
   /* Semantic */
   --success: #3f8f68;
@@ -68,18 +80,18 @@
   --accent: var(--plum);
 }
 .theme-feed-monster {
-  --stage-wash: #fce9e2;
+  --stage-wash: #ffe0e8;
   --accent: var(--berry);
 }
 .theme-bond-garden {
-  --stage-wash: #e6f2e0;
+  --stage-wash: #d8f7dd;
   --accent: var(--leaf);
 }
 .theme-ten-frame {
-  --stage-wash: #fff3d9;
-  --accent: var(--coral);
+  --stage-wash: #ffe9bd;
+  --accent: var(--coral-strong);
 }
 .theme-number-line {
-  --stage-wash: #ddf0e4;
-  --accent: #2f7d5f;
+  --stage-wash: #cdf3e3;
+  --accent: #0f766e;
 }

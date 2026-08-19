@@ -304,6 +304,10 @@ export function TogetherPlay() {
           disabled={!round}
         >
           Next
+          {/* Hidden from the accessible name, which stays plain "Next". */}
+          <span className="go-arrow" aria-hidden="true">
+            →
+          </span>
         </button>
       </div>
     </div>

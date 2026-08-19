@@ -13,8 +13,10 @@
 
 .together-play > .stage {
   flex: 1;
-  /* Room for the strip, plus the home indicator on a phone. */
-  padding-bottom: calc(var(--s6) + 4.5rem);
+  /* Room for the strip, plus the home indicator on a phone. Grew with the
+     Next button — leave the two in step or the game's last line slides under
+     the strip. */
+  padding-bottom: calc(var(--s6) + 5.75rem);
 }
 
 .parent-strip {
@@ -27,6 +29,10 @@
   display: flex;
   gap: var(--s2);
   justify-content: center;
+  /* Centre, not the default stretch: otherwise every pill in the row grows to
+     match the tallest, and making Next bigger would silently make all four
+     bigger — which is the opposite of telling them apart. */
+  align-items: center;
   flex-wrap: wrap;
 
   padding: var(--s3) var(--s4);
@@ -66,27 +72,59 @@
   cursor: default;
 }
 
-/* "Next" is the one the grown-up reaches for most, so it earns a little weight —
-   but stays quieter than anything the child is looking at. */
+/*
+ * "Next" — the one button pressed on every round of every game.
+ *
+ * It used to be a pale teal pill the same size as the other three. That was a
+ * deliberate choice and this deliberately overrides it: the strip's rule is that
+ * nothing up here outshines the child's screen, and Next is the exception,
+ * because a grown-up squinting for the right pill with a child on their lap is
+ * exactly where a session stalls. The other three stay quiet, and that is what
+ * lets this one be found without looking down.
+ *
+ * `--go-start`/`--go-end` are both dark enough to carry white text; the gradient
+ * cannot wander somewhere unreadable because palette.test.ts checks both ends.
+ */
 .parent-button-next {
+  /* Half again the height of its neighbours (--tap, 3.5rem). */
+  min-height: 4.25rem;
+  min-width: 10rem;
+  padding: 0 var(--s6);
   border-color: transparent;
-  background: var(--teal-soft);
-  color: var(--teal);
+  background: linear-gradient(135deg, var(--go-start), var(--go-end));
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  box-shadow: 0 8px 22px rgba(109, 40, 217, 0.32);
 }
 
 .parent-button-next:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--teal-soft) 80%, var(--teal) 20%);
-  color: var(--teal);
+  /* Flip the gradient rather than swap the colours: same two ends, so the
+     contrast guarantee still holds on hover. */
+  background: linear-gradient(135deg, var(--go-end), var(--go-start));
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(109, 40, 217, 0.42);
+}
+
+/* The arrow is decoration, so it lives here and not in the markup: it must not
+   end up in the button's accessible name. */
+.parent-button-next .go-arrow {
+  margin-left: 0.4em;
 }
 
 /* Freeze Dance: the family supplies the music, so the grown-up calls the switch.
    This one IS the game, so unlike the rest of the strip it speaks up. */
 .parent-button-primary {
+  min-height: 4.25rem;
+  padding: 0 var(--s5);
   border-color: transparent;
-  background: var(--coral);
+  /* --coral is 3.4:1 against white — a fill colour wearing a text colour's job.
+     --coral-strong is the same family at 5.2:1. */
+  background: var(--coral-strong);
   color: #fff;
-  font-weight: 700;
-  box-shadow: 0 6px 16px rgba(232, 97, 60, 0.24);
+  font-size: 1.15rem;
+  font-weight: 800;
+  box-shadow: 0 8px 22px rgba(194, 65, 12, 0.3);
 }
 
 .parent-button-primary:hover:not(:disabled) {

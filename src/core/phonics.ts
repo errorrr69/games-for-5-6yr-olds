@@ -654,20 +654,59 @@ const obj = (word: string, initial: string, x: number, y: number): SafariObject 
   y,
 })
 
+/* --- How big a hunted object is drawn ------------------------------- *
+ *
+ * These are not decoration, which is why they live beside the coordinates
+ * rather than in the stylesheet: together with each object's x/y they decide
+ * whether two things OVERLAP, and a child hunting for a sock cannot tap one
+ * that a bed is sitting on top of. `SoundSafari` hands both to CSS as custom
+ * properties so there is a single source of truth, and `phonics.test.ts` holds
+ * every scene to them.
+ *
+ * They used to be 14% of the width in a 20:11 letterbox. On a phone that drew
+ * each object about 48px across — under `--tap` (56px), the app's own minimum
+ * touch target — in the game aimed at the youngest readers. 24% of a 4:3 scene
+ * draws roughly 76px on the same phone, and the scene is taller too, which is
+ * where the room to space eight of them out came from.
+ */
+
+/** Object width, as a percentage of the scene's WIDTH. */
+export const SAFARI_OBJECT_SIZE = 24
+/** The scene's width ÷ its height. */
+export const SAFARI_SCENE_ASPECT = 4 / 3
+
+/**
+ * Two objects collide unless their centres clear each other on one axis.
+ *
+ * y is measured against the shorter side, so a percentage point buys fewer
+ * pixels there: the vertical gap has to be `aspect` times the horizontal one to
+ * put the same distance on screen.
+ */
+export const safariOverlap = (a: SafariObject, b: SafariObject): boolean =>
+  Math.abs(a.x - b.x) < SAFARI_OBJECT_SIZE &&
+  Math.abs(a.y - b.y) < SAFARI_OBJECT_SIZE * SAFARI_SCENE_ASPECT
+
+/**
+ * Objects sit in three bands — up high, along the wall, and down on the floor.
+ * That is both what a room looks like and what fits: at this size a scene holds
+ * three rows of three, which is the eight things a hunt needs plus air. Listed
+ * in reading order, so the tab order and a screen reader sweep the scene the
+ * way an eye does.
+ */
 export const SAFARI_SCENES: SafariScene[] = [
   {
     id: 'bedroom',
     title: 'The bedroom',
     backdrop: 'room',
     objects: [
-      obj('sock', 's', 16, 72),
-      obj('sun', 's', 78, 20),
-      obj('bed', 'b', 30, 62),
-      obj('cup', 'c', 62, 66),
-      obj('map', 'm', 84, 46),
-      obj('top', 't', 46, 74),
-      obj('pen', 'p', 70, 78),
-      obj('hat', 'h', 24, 34),
+      obj('hat', 'h', 20, 18),
+      obj('map', 'm', 51, 18),
+      obj('sun', 's', 82, 18),
+      obj('bed', 'b', 18, 51),
+      obj('cup', 'c', 50, 51),
+      obj('pen', 'p', 82, 51),
+      obj('sock', 's', 28, 84),
+      obj('top', 't', 66, 84),
     ],
   },
   {
@@ -675,14 +714,14 @@ export const SAFARI_SCENES: SafariScene[] = [
     title: 'The kitchen',
     backdrop: 'kitchen',
     objects: [
-      obj('pan', 'p', 22, 66),
-      obj('pot', 'p', 40, 70),
-      obj('jam', 'j', 60, 62),
-      obj('mug', 'm', 76, 68),
-      obj('tin', 't', 34, 40),
-      obj('nut', 'n', 68, 40),
-      obj('fish', 'f', 86, 74),
-      obj('bag', 'b', 12, 62),
+      obj('tin', 't', 18, 18),
+      obj('nut', 'n', 51, 18),
+      obj('jam', 'j', 84, 18),
+      obj('pan', 'p', 16, 51),
+      obj('mug', 'm', 50, 51),
+      obj('fish', 'f', 84, 51),
+      obj('pot', 'p', 30, 84),
+      obj('bag', 'b', 68, 84),
     ],
   },
   {
@@ -690,14 +729,14 @@ export const SAFARI_SCENES: SafariScene[] = [
     title: 'The garden',
     backdrop: 'garden',
     objects: [
-      obj('log', 'l', 18, 74),
-      obj('leg', 'l', 36, 66),
-      obj('net', 'n', 54, 70),
-      obj('sun', 's', 80, 18),
-      obj('dog', 'd', 66, 72),
-      obj('cat', 'c', 30, 50),
-      obj('rat', 'r', 86, 66),
-      obj('web', 'w', 48, 34),
+      obj('web', 'w', 20, 18),
+      obj('cat', 'c', 52, 18),
+      obj('sun', 's', 84, 18),
+      obj('leg', 'l', 16, 51),
+      obj('net', 'n', 50, 51),
+      obj('rat', 'r', 84, 51),
+      obj('log', 'l', 28, 84),
+      obj('dog', 'd', 66, 84),
     ],
   },
 ]

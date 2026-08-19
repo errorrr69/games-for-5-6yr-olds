@@ -34,11 +34,50 @@
   gap: var(--s4);
   width: 100%;
   padding: var(--s6) var(--s5) var(--s7);
-  border: 1px solid var(--line);
+  /* The frame picks up the game's own colour instead of the same grey for all
+     twenty-three. */
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, var(--stage-wash), var(--paper) 62%);
+  /*
+   * Three layers instead of one flat fade. Two soft pools of the game's accent
+   * in the top corners give the wash somewhere to come FROM, which is what
+   * makes a colour read as bright rather than merely present — a single
+   * top-to-bottom fade to white washes out exactly where the child is looking.
+   *
+   * Every colour here is derived from --stage-wash and --accent, so a game only
+   * ever has to set those two, and palette.test.ts still governs both.
+   */
+  background:
+    radial-gradient(
+      120% 80% at 10% 0%,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      100% 70% at 92% 2%,
+      color-mix(in srgb, var(--accent) 12%, transparent),
+      transparent 58%
+    ),
+    linear-gradient(180deg, var(--stage-wash), var(--paper) 68%);
   box-shadow: var(--shadow);
   text-align: center;
+}
+
+/* A band of the game's colour across the top edge, so each one is recognisable
+   from across the room before a word has been read. */
+.stage::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 8px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 35%, var(--paper)),
+    var(--accent)
+  );
 }
 
 .scene {
@@ -120,7 +159,9 @@
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--teal);
+  /* The game's own colour rather than one teal for all of them — this is the
+     line the child reads most, and it was the last grey thing on the stage. */
+  color: var(--accent);
 }
 
 .feedback-try-again {

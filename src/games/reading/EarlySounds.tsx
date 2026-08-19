@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import {
   Robot,
   SafariBackdrop,
   SoundPulses,
   WordPicture,
 } from '../../components/ReadingArt'
-import { SAFARI_SCENES, graphemeById } from '../../core/phonics'
+import {
+  SAFARI_OBJECT_SIZE,
+  SAFARI_SCENES,
+  SAFARI_SCENE_ASPECT,
+  graphemeById,
+} from '../../core/phonics'
 import { play } from '../../core/sound'
 import type { RobotRound, SafariRound, SkywriterRound } from '../../core/types'
 import type { GameProps } from '../shared'
@@ -204,7 +209,19 @@ export function SoundSafari({
 
       <p className="hunt-sound">{round.phoneme}</p>
 
-      <div className="safari-scene">
+      <div
+        className="safari-scene"
+        // Size and shape come from phonics.ts, next to the coordinates they have
+        // to agree with and the test that enforces the no-overlap rule. Passing
+        // them through rather than repeating them in the stylesheet is what
+        // stops a bigger object quietly landing on top of its neighbour.
+        style={
+          {
+            '--safari-object': `${SAFARI_OBJECT_SIZE}%`,
+            '--safari-aspect': SAFARI_SCENE_ASPECT,
+          } as CSSProperties
+        }
+      >
         <SafariBackdrop variant={scene.backdrop} />
         {scene.objects.map((object) => (
           <button

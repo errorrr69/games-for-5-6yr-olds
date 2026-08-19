@@ -6,48 +6,48 @@
  * ------------------------------------------------------------------ */
 
 .theme-robot-translator {
-  --stage-wash: #dde9f7;
-  --accent: #2f6ea8;
+  --stage-wash: #d3e7ff;
+  --accent: #0b63ce;
 }
 .theme-sound-safari {
-  --stage-wash: #e6f2e2;
-  --accent: #4a7f57;
+  --stage-wash: #d9f5df;
+  --accent: #17803d;
 }
 .theme-skywriter {
-  --stage-wash: #e2e2f5;
-  --accent: #5b4b96;
+  --stage-wash: #ded6ff;
+  --accent: #5e35b1;
 }
 .theme-sound-box-factory {
-  --stage-wash: #fdeee0;
-  --accent: #c96a2b;
+  --stage-wash: #ffe1cc;
+  --accent: #c2410c;
 }
 .theme-monster-lab {
-  --stage-wash: #efe5fa;
-  --accent: #7a5aa8;
+  --stage-wash: #f0dcff;
+  --accent: #8e24aa;
 }
 .theme-digraph-detectives {
-  --stage-wash: #e9eef5;
-  --accent: #3f5d80;
+  --stage-wash: #d9e6f7;
+  --accent: #0369a1;
 }
 .theme-blend-train {
-  --stage-wash: #fde9e9;
-  --accent: #c0304a;
+  --stage-wash: #ffdce6;
+  --accent: #c2185b;
 }
 .theme-magic-e-wizard {
-  --stage-wash: #ece4f8;
-  --accent: #6a4aa0;
+  --stage-wash: #e6dcff;
+  --accent: #6d28d9;
 }
 .theme-tricky-treasure {
-  --stage-wash: #e2f0f7;
-  --accent: #2c6f92;
+  --stage-wash: #cdeaf8;
+  --accent: #0277bd;
 }
 .theme-word-ladder {
-  --stage-wash: #f6ecdd;
-  --accent: #a56a2f;
+  --stage-wash: #ffeccc;
+  --accent: #9a6b00;
 }
 .theme-story-quest {
-  --stage-wash: #eaf1e8;
-  --accent: #4a7f57;
+  --stage-wash: #d9f0d5;
+  --accent: #0f766e;
 }
 
 /* Words and letters ------------------------------------------------- */
@@ -383,7 +383,10 @@ span.drag-ghost.word-tile {
 .safari-scene {
   position: relative;
   width: min(46rem, 100%);
-  aspect-ratio: 20 / 11;
+  /* Both of these are handed down by SoundSafari from phonics.ts, where the
+     object coordinates live. The fallbacks repeat SAFARI_SCENE_ASPECT and
+     SAFARI_OBJECT_SIZE only so the rule still makes sense on its own. */
+  aspect-ratio: var(--safari-aspect, 4 / 3);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow);
@@ -392,27 +395,60 @@ span.drag-ghost.word-tile {
 .safari-object {
   position: absolute;
   translate: -50% -50%;
-  width: 14%;
-  min-width: 3rem;
-  padding: 4px;
-  border: 3px solid transparent;
+  width: var(--safari-object, 24%);
+  /* A floor under the percentage: never smaller than the app's tap target,
+     whatever the screen is doing. */
+  min-width: var(--tap);
+  padding: 5px;
+  border: 4px solid transparent;
   border-radius: var(--radius);
   background: none;
-  transition: transform 0.15s ease;
+  cursor: pointer;
+  /*
+   * Grow with `scale`, not with `transform`.
+   *
+   * `translate` above is its own property, and the browser applies it BEFORE
+   * `transform` rather than instead of it. The old hover rule set
+   * `transform: translate(-50%, -50%) scale(1.12)`, so the two compounded and
+   * the object jumped a full width up and to the left the instant a finger
+   * landed on it — on a touch screen, :hover sticks after a tap.
+   */
+  scale: 1;
+  transition: scale 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 
-.safari-object:hover {
-  transform: translate(-50%, -50%) scale(1.12);
+.safari-object:hover,
+.safari-object:focus-visible {
+  scale: 1.1;
 }
 
 .safari-object.is-found {
   border-color: var(--success);
   background: var(--success-soft);
+  scale: 1.06;
+}
+
+/* A found thing says so on its own, without the child having to read the
+   counter underneath the scene. */
+.safari-object.is-found::after {
+  content: '★';
+  position: absolute;
+  top: -0.55rem;
+  right: -0.55rem;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  background: var(--success);
+  color: #fff;
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .safari-object.is-missed {
   border-color: var(--attention);
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 /* Skywriter ------------------------------------------------------------ */

@@ -46,5 +46,8 @@ export default defineConfig({
       },
     },
   },
-  test: { environment: 'jsdom', globals: true },
+  // css: true so `?raw` imports of the stylesheets arrive as their actual text.
+  // Vitest stubs CSS modules to an empty string by default, which made
+  // palette.test.ts silently check nothing at all.
+  test: { environment: 'jsdom', globals: true, css: true },
 })
